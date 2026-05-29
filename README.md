@@ -178,7 +178,7 @@ Retourne une liste paginée de produits avec filtres et tris.
 
 La pagination numérotée est la stratégie la plus adaptée à un catalogue e-commerce avec filtres et tris. Elle permet à l'utilisateur de se repérer précisément dans le catalogue, de revenir en arrière et de naviguer librement. Le scroll infini et le "Load More" ont été écartés car ils accumulent tous les produits en mémoire côté client et rendent difficile le reset lors d'un changement de filtre ou de tri.
 
-La stratégie `skip/limit` MongoDB est utilisée. Sur 5 000 documents avec des index sur `category`, `price` et `createdAt`, les performances sont largement suffisantes. La pagination par curseur aurait constitué une sur-ingénierie injustifiée ici.
+La pagination repose sur les opérateurs `skip` et `limit` de MongoDB. Sur 5 000 documents avec des index sur `category`, `price` et `createdAt`, les performances sont largement suffisantes. La pagination par curseur aurait constitué une sur-ingénierie injustifiée ici.
 
 ### React Query
 
@@ -186,11 +186,11 @@ Le `useEffect` natif a été écarté au profit de React Query pour trois raison
 
 - **Race conditions** — React Query annule automatiquement les requêtes obsolètes, évitant qu'une réponse tardive écrase une réponse plus récente.
 - **Cache automatique** — naviguer page 3 → page 4 → page 3 ne refait pas de requête réseau. L'option `keepPreviousData` évite le flash blanc entre les changements de page.
-- **États natifs** — `isLoading`, `isError`, `isFetching` disponibles sans boilerplate.
+- **États natifs** — `isLoading`, `isError`, `isFetching` disponibles sans code répétitif.
 
 ### Validation manuelle
 
-Avec 8 paramètres simples à valider, une validation manuelle avec `parseInt`, valeurs par défaut et whitelist couvre tous les cas en une vingtaine de lignes. Zod ou Joi auraient constitué une dépendance injustifiée pour ce périmètre. Sur un projet en production avec des dizaines de paramètres, Zod serait le choix approprié.
+Avec 8 paramètres simples à valider, une validation manuelle avec `parseInt`, valeurs par défaut et whitelist couvre tous les cas en une vingtaine de lignes. Des librairies comme Zod auraient permis de remplacer les ~50 lignes de validation manuelle par un schéma déclaratif de 10 lignes, mais constituent une dépendance injustifiée pour 8 paramètres simples. Sur un projet en production avec des dizaines de paramètres, leur utilisation serait justifiée.
 
 ### Filtres
 
